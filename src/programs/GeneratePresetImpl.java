@@ -8,39 +8,32 @@ import java.util.*;
 
 public class GeneratePresetImpl implements GeneratePreset {
 
-    // Сложность: Сортировка - O(n log n). Выбор юнитов - O(n). В итоге - O(n log n)
+    // Сложность: Выбор юнитов - O(n). Время вызова функий, связанных со случайными числами будем считать константным
+    // В итоге - O(n)
     @Override
     public Army generate(List<Unit> unitList, int maxPoints) {
-        Army army = new Army();
-        List<Unit> units = new ArrayList<>();
+        var army = new Army();
+        var units = new ArrayList<Unit>();
 
-        sortUnits(unitList);
+        unitList.sort(Comparator.comparingDouble(unit -> -((double) (unit.getBaseAttack() + unit.getHealth()) / unit.getCost())));
 
-        int points = 0;
+        var points = 0;
 
-        for (Unit unit : unitList) {
-            int quantity = calculateMaxUnitsToAdd(unit, maxPoints, points);
+        for (var unit: unitList) {
+            var quantity = Math.min(11, (maxPoints - points) / unit.getCost());
             addUnitsToArmy(unit, quantity, units);
             points += quantity * unit.getCost();
         }
 
-        assignCoordinates(units);
+        setCoordinates(units);
         army.setUnits(units);
         army.setPoints(points);
         return army;
     }
 
-    private void sortUnits(List<Unit> units) {
-        units.sort(Comparator.comparingDouble(unit -> -((double) (unit.getBaseAttack() + unit.getHealth()) / unit.getCost())));
-    }
-
-    private int calculateMaxUnitsToAdd(Unit unit, int maxPoints, int points) {
-        return Math.min(11, (maxPoints - points) / unit.getCost());
-    }
-
     private void addUnitsToArmy(Unit unit, int quantity, List<Unit> selectedUnits) {
         for (int i = 0; i < quantity; i++) {
-            Unit newUnit = new Unit(unit.getName(), unit.getUnitType(), unit.getHealth(),
+            var newUnit = new Unit(unit.getName(), unit.getUnitType(), unit.getHealth(),
                     unit.getBaseAttack(), unit.getCost(), unit.getAttackType(),
                     unit.getAttackBonuses(), unit.getDefenceBonuses(), -1, -1);
             newUnit.setName(unit.getUnitType() + " " + i);
@@ -48,19 +41,33 @@ public class GeneratePresetImpl implements GeneratePreset {
         }
     }
 
-    private void assignCoordinates(List<Unit> units) {
-        Set<String> occupiedCoords = new HashSet<>();
-        Random random = new Random();
+    private void setCoordinates(List<Unit> units) {
+        var alreadyUsed = new HashSet<Integer>();
+        var random = new Random();
+        var left = 0;
+        var right = 21*3-1;
+
 
         for (Unit unit : units) {
-            int coordX, coordY;
-            do {
-                coordX = random.nextInt(3);
-                coordY = random.nextInt(21);
-            } while (occupiedCoords.contains(coordX + "," + coordY));
-            occupiedCoords.add(coordX + "," + coordY);
-            unit.setxCoordinate(coordX);
-            unit.setyCoordinate(coordY);
+            int number;
+            var rand = random.nextInt(100);
+            if (rand < 50) {
+                number = left;
+                left++;
+            }
+            else {
+                number = right;
+                right--;
+            }
+            var x = number / 21;
+            var y = number % 21;
+            if (alreadyUsed.contains(number)) {
+                continue;
+            }
+            alreadyUsed.add(number);
+            unit.setxCoordinate(x);
+            unit.setyCoordinate(y);
         }
     }
+
 }

@@ -22,6 +22,8 @@ public class SimulateBattleImpl implements SimulateBattle {
             executeAttacks(playerUnits);
             executeAttacks(computerUnits);
         }
+
+
     }
 
     private void executeAttacks(Set<Unit> attackingUnits) throws InterruptedException {
