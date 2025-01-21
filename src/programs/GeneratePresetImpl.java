@@ -9,7 +9,8 @@ import java.util.*;
 public class GeneratePresetImpl implements GeneratePreset {
 
     // Сложность: Выбор юнитов - O(n). Время вызова функий, связанных со случайными числами будем считать константным
-    // В итоге - O(n)
+    // Сортировка - O(nlogn)
+    // В итоге - O(nlogn)
     @Override
     public Army generate(List<Unit> unitList, int maxPoints) {
         var army = new Army();
