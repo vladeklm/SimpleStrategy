@@ -7,10 +7,12 @@ import com.battle.heroes.army.programs.GeneratePreset;
 import java.util.*;
 
 public class GeneratePresetImpl implements GeneratePreset {
-
-    // Сложность: Выбор юнитов - O(n). Время вызова функий, связанных со случайными числами будем считать константным
-    // Сортировка 4 элементов- константа
-    // В итоге - O(n)
+    //n - количество типов юнитов, m - количество юнитов в армии
+    // Сложность: Добавление юнитов - O(m). (в цикле на 24 строчке мы для каждого типа генерируем соответствующее количество юнитов
+    // в сумме их будет m)
+    // Время вызова функий, связанных со случайными числами будем считать константным
+    // Сортировка 4 элементов- O(nLogn)
+    // В итоге - O(m + nlogn)
     @Override
     public Army generate(List<Unit> unitList, int maxPoints) {
         var army = new Army();
